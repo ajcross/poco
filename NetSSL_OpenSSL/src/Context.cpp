@@ -354,6 +354,24 @@ void Context::preferServerCiphers()
 #endif
 }
 
+void Context::setALPNprotos(const std::vector<std::string>& protocols) {
+	unsigned char protos[65535];
+	unsigned protos_len = 0;
+
+	if(protocols.size() == 0)
+		throw Poco::InvalidArgumentException("Invalid or unsupported usage");
+
+	for (auto protocol: protocols) {
+		if(protocol.length() > 255 || protocol.length()== 0)
+			throw Poco::InvalidArgumentException("Invalid or unsupported usage");
+		protos[protos_len] = (unsigned char) protocol.length();
+		memcpy(&protos[protos_len+1],protocol.c_str(),protocol.length());
+		protos_len += protocol.length() +1;
+	}
+
+	SSL_CTX_set_alpn_protos(_pSSLContext, protos, protos_len);
+}
+
 
 void Context::createSSLContext()
 {
