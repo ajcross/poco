@@ -564,11 +564,9 @@ bool SecureSocketImpl::sessionWasReused()
 bool SecureSocketImpl::getALPNproto(std::string &alpnproto) {
 	const unsigned char * data;
 	unsigned int len;
-	SSL_get0_alpn_selected(_pSSL, &data, &len);
-	std::cerr << "ALPN Len "<<len<<"\n";
+	SSL_get0_alpn_selected(_pSSL, &data, &len);	
 	if(len>0) {
-		std::string proto((const char*)data,len);
-		std::cerr << "ALPN Proto "<<proto<<"\n";
+		alpnproto.assign((const char*)data,len);		
 		return true;
 	}
 	return false;
